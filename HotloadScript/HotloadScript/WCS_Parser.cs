@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace WCS
 {
@@ -168,7 +169,8 @@ namespace WCS
                                 string vSubTypeStr = new string(vSubType);
                                 Assembly assembly = Assembly.Load(vType);
                                 Type type = assembly.GetType(vSubTypeStr);
-                              //  type.Assembly.get
+                                varValue = type.Assembly.CreateInstance(type.ToString());
+                                varType = type;
                             }
                             Out:;
 
@@ -185,9 +187,17 @@ namespace WCS
             return obj;
         }
 
-        static void ParserAndRunFunction(string src, string name)
+        static void ParserAndRunFunction(WCS_Object obj, string name,object[] paramInputs)
         {
-            //src.Substring()
+            int[] function_start_end = obj.FunctionMap[name];
+            string[] function_params = obj.FunctionParams[name];
+            for(int i = function_start_end[0]; i <= function_start_end[1]; i++)
+            {
+                //call functions
+                Regex function_rx = new Regex(@"[^\d]+[\w]+[(]+[\S]+[)]");
+
+                MatchCollection function_mc = function_rx.Matches(obj.source_in_line[i]);
+            }
         }
     }
 }
